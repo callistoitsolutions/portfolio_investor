@@ -18,7 +18,25 @@ st.markdown("""
     
     /* Sidebar Styling */
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #1e3c72 0%, #2a5298 100%);
+        background: linear-gradient(180deg, #ffffff 0%, #f7fafc 100%);
+        border-right: 2px solid #e2e8f0;
+    }
+    
+    [data-testid="stSidebar"] h2 {
+        color: #2d3748 !important;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    [data-testid="stSidebar"] label {
+        color: #2d3748 !important;
+        font-weight: 600;
+    }
+    
+    [data-testid="stSidebar"] .stSelectbox {
+        color: #2d3748 !important;
     }
     
     /* Main Content Container */
@@ -261,7 +279,7 @@ if not df.empty:
         st.write(f"**Unique clients:** {df['client_id'].nunique()}")
 
     # --- SIDEBAR FILTERS ---
-    st.sidebar.markdown("<h2 style='color: white; text-align: center;'>🔍 Filters</h2>", unsafe_allow_html=True)
+    st.sidebar.markdown("<h2 style='text-align: center;'>🔍 Filters</h2>", unsafe_allow_html=True)
     st.sidebar.markdown("---")
 
     clients = sorted(df['client_id'].unique())
