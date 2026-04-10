@@ -193,8 +193,8 @@ def load_and_process_data():
 df = load_and_process_data()
 
 if df.empty:
-    st.warning("⚠️ No data available. Please upload data in the 'Data Management' tab.")
-    st.info("💡 You can upload an Excel or CSV file with your portfolio data.")
+    st.warning("⚠️ No data available. Please upload data below to get started.")
+    st.info("💡 You can upload an Excel (.xlsx) or CSV (.csv) file with your portfolio data.")
     
     # Show sample data format
     with st.expander("📋 Required Data Format"):
@@ -207,6 +207,49 @@ if df.empty:
             'investment_start_date': ['2023-01-01', '2023-02-01', '2023-03-01']
         })
         st.dataframe(sample_df)
+    
+    st.markdown("---")
+    st.markdown("<h2>📤 Upload Your Portfolio Data</h2>", unsafe_allow_html=True)
+    
+    uploaded_file = st.file_uploader("Choose File", type=["xlsx", "csv"], key="initial_upload")
+    
+    if uploaded_file is not None:
+        try:
+            # Read file
+            if uploaded_file.name.endswith('.xlsx'):
+                new_df = pd.read_excel(uploaded_file)
+            else:
+                new_df = pd.read_csv(uploaded_file)
+            
+            # Normalize column names
+            new_df.columns = new_df.columns.str.lower().str.strip().str.replace(" ", "_")
+            
+            st.success(f"✅ File loaded! {len(new_df)} rows, {len(new_df.columns)} columns")
+            
+            # Preview
+            st.markdown("#### 📋 Data Preview")
+            st.dataframe(new_df.head(10), use_container_width=True)
+            
+            # Statistics
+            st1, st2, st3 = st.columns(3)
+            st1.metric("Total Rows", len(new_df))
+            st2.metric("Unique Clients", new_df['client_id'].nunique() if 'client_id' in new_df.columns else "N/A")
+            st3.metric("Total Columns", len(new_df.columns))
+            
+            if st.button("💾 Save Data", type="primary", key="save_initial"):
+                try:
+                    save_portfolio_data(new_df)
+                    st.success("🎉 Data saved successfully!")
+                    st.balloons()
+                    st.cache_data.clear()
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"❌ Save failed: {e}")
+                    
+        except Exception as e:
+            st.error(f"❌ Error reading file: {e}")
+    
+    st.stop()  # Stop here if no data exists
 
 # Only show dashboard if data exists
 if not df.empty:
